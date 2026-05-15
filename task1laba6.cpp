@@ -1,12 +1,78 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#include <string>
 using namespace std;
 // Объявление генератора псевдослучайных чисел для дальнейшего использования в программе
 mt19937 gen(random_device{}());
 
-void part1(int M, int N)
+// Прототипы функций
+void part1();
+vector<int> quickSort(vector<int> nums, bool flag);
+void part2();
+bool search(char array[][10], bool visited[][10], 
+        string& inputFromUser, int i, int j, 
+        int wordIndex, int M, int N);
+void part3();
+
+int main()
 {
+    int option;
+    do
+    {
+        cout << "Доступные действия\n";
+        cout << "1. Пункт 1\n";
+        cout << "2. Пункт 2\n";
+        cout << "3. Пункт 3\n";
+        cout << "Выход\n";
+        cout << "Выберите действие: ";
+        while(!(cin >> option) || option < 0 || option > 4)
+        {
+            cout << "Ошибка: введите корректное действие!!\n";
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Выберите действие: ";
+        }
+        switch (option)
+        {
+            case 1:
+                part1();
+                break;   
+            case 2:
+                part2();
+                break;
+            case 3:
+                part3();
+                break;
+            default:
+                cout << "Выход...";
+                break;
+        }
+    } while (option != 4);
+    
+    return 0;
+}
+
+void part1()
+{
+    cout << "Введите количество строк M > 5: ";
+    int M;
+    while (!(cin >> M) || M <= 5 || M < 0)
+    {
+        cout << "Ошибка: введите целое положительное больше 5!!!\n";
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Введите количество строк M > 5: ";
+    }
+    cout << "Введите количество столбцов N > 5: ";
+    int N;
+    while (!(cin >> N) || N <= 5 || N < 0)
+    {
+        cout << "Ошибка: введите целое положительное больше 5!!!\n";
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Введите количество столбцов N > 5: ";
+    }
     uniform_int_distribution nums(-50,50);
     // Инициализация и заполнение массива случайными числами от -50 до 50
     int arrayForPart1[M][N];
@@ -71,7 +137,6 @@ void part1(int M, int N)
     cout << "\nСтрока: " << bestRow + 1 << endl;
     cout << "Длина: " << lenthOfBestLine << endl;
 }
-
 vector<int> quickSort(vector<int> nums, bool flag)
 {
     // Базовый случай рекурсии
@@ -139,9 +204,17 @@ vector<int> quickSort(vector<int> nums, bool flag)
 
     return sortedArray;
 }
-
-void part2(int M)
+void part2()
 {
+    cout << "Введите количество строк M > 5: ";
+    int M;
+    while (!(cin >> M) || M <= 5 || M <= 0)
+    {
+        cout << "Ошибка: введите целое положительное больше 5!!!\n";
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Введите количество строк M > 5: ";
+    }
     uniform_int_distribution nums(100, 200);
     // Инициализация и заполнение массива случайными числами в диапазоне от 100 до 200
     int squareArrayForPart2[M][M];
@@ -226,14 +299,107 @@ void part2(int M)
         cout << endl;
     }
 }
-
-int main()
+// Функция поиска для пункта 3
+bool search(char array[][10], bool visited[][10], 
+        string& inputFromUser, int i, int j, 
+        int wordIndex, int M, int N)
 {
-    cout << "Введите количество строк M: ";
+    // Все символы совпали, слово найдено
+    if (wordIndex == (int)inputFromUser.size()){return true;}
+    // Выход за пределы массива
+    if (i < 0 || i >= M || j < 0 || j >= N){return false;}
+    //Несовпадение символа или повторное посещение ячейки
+    if (visited[i][j] || array[i][j] != inputFromUser[wordIndex]){return false;}
+    // Помечаем ячейку как посещённую
+    visited[i][j] = true;
+    // Рекурсивная проверка соседей: верх, вниз, влево, вправо
+    if (search(array, visited, inputFromUser, i - 1, j, wordIndex + 1, M, N) ||
+        search(array, visited, inputFromUser, i + 1, j, wordIndex + 1, M, N) ||
+        search(array, visited, inputFromUser, i, j - 1, wordIndex + 1, M, N) ||
+        search(array, visited, inputFromUser, i, j + 1, wordIndex + 1, M, N))
+    {
+        visited[i][j] = false;
+        return true;
+    }
+
+    visited[i][j] = false;
+    return false;
+}
+void part3()
+{
+    cout << "Введите количество строк M <= 5: ";
     int M;
-    cin >> M;
-    cout << "Введите количество столбцов N: ";
+    while (!(cin >> M) || M > 5 || M < 0)
+    {
+        cout << "Ошибка: введите целое положительное число меньше либо равно 5!!\n";
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Введите количество строк M <= 5: ";
+    }
+    cout << "Введите количество столбцов N <= 10: ";
     int N;
-    cin >> N;
-    return 0;
+    while(!(cin >> N) || N > 10 || N < 0)
+    {
+        cout << "Ошибка: введите целое положительное число меньше либо равно 10!!\n";
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Введите количество столбцов N <= 10: "; 
+    }
+    cin.ignore();
+    string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    uniform_int_distribution<int> index(0, (int)alphabet.size() - 1);
+
+    char array[10][10];
+    for (int i = 0; i < M; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            array[i][j] = alphabet[index(gen)];
+        }
+    }
+
+    cout << "Сгенерированный массив:\n";
+    for (int i = 0; i < M; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            cout << array[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    cout << "Введите слово: ";
+    string inputFromUser;
+    getline(cin, inputFromUser);
+
+    bool visited[10][10];
+    for (int i = 0; i < M; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            visited[i][j] = false;
+        }
+    }
+
+    bool found = false;
+    // Проходим по всему массиву начиная с [0, 0]
+    for (int i = 0; i < M && !found; i++)
+    {
+        for (int j = 0; j < N && !found; j++)
+        {
+            if (search(array, visited, inputFromUser, i, j, 0, M, N))
+                {
+                    found = true;
+                }
+        }
+    }
+    // Вывод результата
+    if (found)
+        {
+            cout << "Слово \"" << inputFromUser << "\" найдено в матрице." << endl;
+        }
+    else
+        {
+            cout << "Слово \"" << inputFromUser << "\" не найдено в матрице." << endl;
+        }
 }
