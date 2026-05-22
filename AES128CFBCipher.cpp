@@ -106,7 +106,6 @@ void generationKey(uint8_t key[16])
 void rotWord(uint8_t word[4])
 {
     uint8_t temp = word[0];
-
     word[0] = word[1];
     word[1] = word[2];
     word[2] = word[3];
@@ -203,6 +202,46 @@ void shiftRows(uint8_t matrix[4][4])
     matrix[3][0] = temp;
 }
 
+uint8_t gmul(uint8_t a, uint8_t b)
+{
+    uint8_t p = 0;
+
+    for (int i = 0; i < 8; i++)
+    {
+        if (b & 1)
+        {
+            p ^= a;
+        }
+        uint8_t hi_bit_set = a & 0x80;
+        a <<= 1;
+        if (hi_bit_set)
+        {
+            a ^= 0x1B;
+        }
+        b >>= 1;
+    }
+
+    return p;
+}
+
+void mixColumns(uint8_t matrix[4][4])
+{
+    for (int column = 0; column < 4; column++)
+    {
+        uint8_t s0 = matrix[0][column];
+        uint8_t s1 = matrix[1][column];
+        uint8_t s2 = matrix[2][column];
+        uint8_t s3 = matrix[3][column];
+
+        matrix[0][column] = gmul(0x02, s0) ^ gmul(0x03, s1) ^ s2 ^ s3;
+        matrix[1][column] = s0 ^ gmul(0x02, s1) ^ gmul(0x03, s2) ^ s3;
+        matrix[2][column] = s0 ^ s1 ^ gmul(0x02, s2) ^ gmul(0x03, s3);
+        matrix[3][column] = gmul(0x03, s0) ^ s1 ^ s2 ^ gmul(0x02, s3);
+    }
+}
+
+
+
 void writeToMatrix(uint8_t matrix[4][4], const vector<uint8_t>& convertedToUTF8)
 {
     // Заполнение матрицы 4х4
@@ -225,6 +264,12 @@ void unwriteFromMatrix(uint8_t matrix[4][4], vector<uint8_t>& afterCyphering)
             afterCyphering[column * 4 + row] = matrix[row][column];
         }
     }
+}
+
+void encryptBlock(const vector<uint8_t>& inputBlock, vector<uint8_t>& outputBlock, const uint8_t expandedKey[176])
+{
+    uint8_t state[4][4];
+    writeToMatrix(state, inputBlock);
 }
 
 int main()
