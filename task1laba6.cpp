@@ -24,7 +24,7 @@ int main()
         cout << "1. Пункт 1\n";
         cout << "2. Пункт 2\n";
         cout << "3. Пункт 3\n";
-        cout << "Выход\n";
+        cout << "4. Выход\n";
         cout << "Выберите действие: ";
         while(!(cin >> option) || option < 0 || option > 4)
         {
