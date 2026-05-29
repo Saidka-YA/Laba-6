@@ -29,9 +29,9 @@ int main()
     cout << fixed << setprecision(6);
 
     cout << "Матрица L:\n";
-    for(int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        for(int j = 0; j < 4; j++)
+        for (int j = 0; j < 4; j++)
         {
             cout << setw(12) << L[i][j];
         }
@@ -39,9 +39,9 @@ int main()
     }
 
     cout << "\nМатрица U:\n";
-    for(int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        for(int j = 0; j < 4; j++)
+        for (int j = 0; j < 4; j++)
         {
             cout << setw(12) << U[i][j];
         }
@@ -57,37 +57,37 @@ int main()
 
 void LU(double A[4][4], double L[4][4], double U[4][4])
 {
-    for(int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        for(int j = 0; j < 4; j++)
+        for (int j = 0; j < 4; j++)
         {
             L[i][j] = 0;
             U[i][j] = 0;
         }
     }
 
-    for(int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        for(int k = i; k < 4; k++)
+        for (int k = i; k < 4; k++)
         {
             double sum = 0;
-            for(int j = 0; j < i; j++)
+            for (int j = 0; j < i; j++)
             {
                 sum += L[i][j] * U[j][k];
             }
             U[i][k] = A[i][k] - sum;
         }
 
-        for(int k = i; k < 4; k++)
+        for (int k = i; k < 4; k++)
         {
-            if(i == k)
+            if (i == k)
             {
                 L[i][i] = 1;
             }
             else
             {
                 double sum = 0;
-                for(int j = 0; j < i; j++)
+                for (int j = 0; j < i; j++)
                 {
                     sum += L[k][j] * U[j][i];
                 }
@@ -102,20 +102,20 @@ void solveLU(double L[4][4], double U[4][4], double b[4])
     double y[4];
     double x[4];
 
-    for(int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
         double sum = 0;
-        for(int j = 0; j < i; j++)
+        for (int j = 0; j < i; j++)
         {
             sum += L[i][j] * y[j];
         }
         y[i] = b[i] - sum;
     }
 
-    for(int i = 3; i >= 0; i--)
+    for (int i = 3; i >= 0; i--)
     {
         double sum = 0;
-        for(int j = i + 1; j < 4; j++)
+        for (int j = i + 1; j < 4; j++)
         {
             sum += U[i][j] * x[j];
         }
@@ -123,7 +123,7 @@ void solveLU(double L[4][4], double U[4][4], double b[4])
     }
 
     cout << "\nРешение методом LU:\n";
-    for(int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
         cout << "x" << i+1 << " = " << setw(10) << x[i] << endl;
     }
@@ -137,27 +137,23 @@ void seidel(double A[4][4], double b[4])
     int iteration = 0;
 
     cout << "\nМетод Зейделя:\n";
-    cout << setw(5)  << "N"
-         << setw(12) << "x1"
-         << setw(12) << "x2"
-         << setw(12) << "x3"
-         << setw(12) << "x4"
-         << setw(12) << "eps" << endl;
+    cout << setw(5)  << "N" << setw(12) << "x1" << setw(12) << "x2" << setw(12) << "x3"
+         << setw(12) << "x4" << setw(12) << "eps" << endl;
 
     while(true)
     {
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             oldX[i] = x[i];
         }
 
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             double sum = b[i];
 
-            for(int j = 0; j < 4; j++)
+            for (int j = 0; j < 4; j++)
             {
-                if(i != j)
+                if (i != j)
                 {
                     sum -= A[i][j] * x[j];
                 }
@@ -167,10 +163,10 @@ void seidel(double A[4][4], double b[4])
         }
 
         double maxDiff = 0;
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             double diff = fabs(x[i] - oldX[i]);
-            if(diff > maxDiff)
+            if (diff > maxDiff)
             {
                 maxDiff = diff;
             }
@@ -178,20 +174,15 @@ void seidel(double A[4][4], double b[4])
 
         iteration++;
 
-        cout << setw(5)  << iteration
-             << setw(12) << x[0]
-             << setw(12) << x[1]
-             << setw(12) << x[2]
-             << setw(12) << x[3]
-             << setw(12) << maxDiff
-             << endl;
+        cout << setw(5)  << iteration << setw(12) << x[0] << setw(12) << x[1] << setw(12) << x[2]
+             << setw(12) << x[3] << setw(12) << maxDiff << endl;
 
-        if(maxDiff < EPS)
+        if (maxDiff < EPS)
         {
             break;
         }
 
-        if(iteration > 1000)
+        if (iteration > 1000)
         {
             cout << "Метод не сошелся.\n";
             break;
